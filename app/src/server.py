@@ -3,6 +3,7 @@ from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from datetime import datetime
 server = Flask(__name__)
+port = int(os.environ.get("PORT", 5000))
 
 UPLOAD_FOLDER = 'UPLOAD_FOLDER'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'bmp'])
@@ -43,4 +44,4 @@ def upload_file():
         return '''<!doctype html><title>Image upload</title><h1>Invalid usage</h1>'''
 
 if __name__ == "__main__":
-    server.run(host="0.0.0.0")
+    server.run(host="0.0.0.0", port=port)
