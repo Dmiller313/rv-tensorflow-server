@@ -1,9 +1,10 @@
 import os
+import kerastest
 from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from datetime import datetime
 server = Flask(__name__)
-port = int(os.environ.get("PORT", 5000))
+port = int(os.environ.get("PORT", 8000))
 
 UPLOAD_FOLDER = 'UPLOAD_FOLDER'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'bmp'])
@@ -19,6 +20,11 @@ def allowed_file(filename):
 @server.route("/")
 def hello():
      return "HELLO WORLD"
+
+@server.route("/test")
+def run_other():
+    keras-test.keras_test()
+    
 
 @server.route("/upload", methods=['POST', 'GET'])
 def upload_file():
@@ -43,5 +49,6 @@ def upload_file():
     else:
         return '''<!doctype html><title>Image upload</title><h1>Invalid usage</h1>'''
 
+#TODO: wet up WSGI server (i.e. Waitress or gevent)
 if __name__ == "__main__":
     server.run(host="0.0.0.0", port=port)
