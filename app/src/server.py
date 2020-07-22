@@ -1,6 +1,7 @@
 import os
-import kerastest
-from flask import Flask, flash, request, redirect, url_for
+import identify
+import json
+from flask import Flask, flash, request, redirect, url_for, jsonify
 from werkzeug.utils import secure_filename
 from datetime import datetime
 server = Flask(__name__)
@@ -20,10 +21,6 @@ def allowed_file(filename):
 @server.route("/")
 def hello():
      return "HELLO WORLD"
-
-@server.route("/test")
-def run_other():
-    keras-test.keras_test()
     
 
 @server.route("/upload", methods=['POST', 'GET'])
@@ -41,7 +38,9 @@ def upload_file():
             flash('Processing image')
             filename = secure_filename(file.filename)
             file.save(os.path.join(server.config['UPLOAD_FOLDER'], dt_string + '_' + filename))
-            return redirect(url_for('upload_file', filename=filename))
+            json = identify.identifyObject(os.path.join(server.config['UPLOAD_FOLDER'], dt_string + '_' + filename))
+            #return redirect(url_for('upload_file', filename=filename))
+            return jsonify(json)
         else:
              return '''<!doctype html><title>Image upload</title><h1>Invalid usage</h1>'''
     elif request.method == 'GET':
@@ -49,6 +48,5 @@ def upload_file():
     else:
         return '''<!doctype html><title>Image upload</title><h1>Invalid usage</h1>'''
 
-#TODO: wet up WSGI server (i.e. Waitress or gevent)
 if __name__ == "__main__":
     server.run(host="0.0.0.0", port=port)

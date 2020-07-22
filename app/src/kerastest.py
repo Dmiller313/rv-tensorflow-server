@@ -3,12 +3,12 @@
 # Helper libraries
 import numpy as np
 import os
-from tensorflow.keras.layers import Input, Dense
-import tensorflow.keras as keras
-import tensorflow.keras.backend
- 
+
 # TensorFlow
 import tensorflow as tf
+from tensorflow.keras.layers import Input, Dense
+import tensorflow.keras.backend
+from tensorflow import keras
 
 def keras_test():
     print(tf.__version__)
@@ -24,6 +24,7 @@ def keras_test():
     X_val, y_val = X[train_end:test_start], y[train_end:test_start]
 
     keras.backend.clear_session()
+    #clear_session()
     linear_model = keras.models.Sequential([
                                            keras.layers.Dense(units=1, input_shape=[1], name='Single')
                                            ])
