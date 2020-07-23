@@ -7,6 +7,7 @@ from datetime import datetime
 server = Flask(__name__)
 port = int(os.environ.get("PORT", 8000))
 
+model = tf.keras.models.load_model("512_79_coffee.model")
 UPLOAD_FOLDER = 'UPLOAD_FOLDER'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'bmp'])
 
@@ -17,6 +18,15 @@ server.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 def allowed_file(filename):
      return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def identifyObject(img):
+     prediction = model.predict([prepare(img)])
+    jsonBuild = {
+        "foundObject":CATEGORIES[int(prediction[0][0])]#,
+        #"matchPercentage":calculateMatch(),
+        #"otherInfo":"other"
+    }
+    return jsonBuild
 
 @server.route("/")
 def hello():
@@ -38,7 +48,8 @@ def upload_file():
             flash('Processing image')
             filename = secure_filename(file.filename)
             file.save(os.path.join(server.config['UPLOAD_FOLDER'], dt_string + '_' + filename))
-            json = identify.identifyObject(os.path.join(server.config['UPLOAD_FOLDER'], dt_string + '_' + filename))
+            #json = identify.identifyObject(os.path.join(server.config['UPLOAD_FOLDER'], dt_string + '_' + filename))
+            json = identifyObject(os.path.join(server.config['UPLOAD_FOLDER'], dt_string + '_' + filename)
             #return redirect(url_for('upload_file', filename=filename))
             return jsonify(json)
         else:

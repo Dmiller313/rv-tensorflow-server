@@ -18,4 +18,4 @@ COPY src/ .
 EXPOSE 8000
 
 # CMD [ "python", "./server.py" ]
-CMD gunicorn --bind 0.0.0.0:8000 server:server
+CMD gunicorn --bind 0.0.0.0:$PORT server:server
