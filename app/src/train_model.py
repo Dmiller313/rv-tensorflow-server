@@ -13,6 +13,10 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
 
+from tensorflow.keras.backend import clear_session
+# Before instantiating a tf.data.Dataset obj & before model creation, call:
+clear_session()
+
 # training the model via docker is SLOW!
 
 pickle_in = open("X.pickle","rb")
@@ -26,18 +30,23 @@ X = X/255.0
 model = Sequential()
 
 #L1
-model.add(Conv2D(64, (3, 3), input_shape=X.shape[1:]))
+model.add(Conv2D(64, (2, 2), input_shape=X.shape[1:]))
 model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(MaxPooling2D(pool_size=(3, 3)))
 
 #L2
-model.add(Conv2D(64, (3, 3)))
+model.add(Conv2D(64, (2, 2)))
 model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(MaxPooling2D(pool_size=(3, 3)))
 
 #L3
+model.add(Conv2D(64, (2, 2)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(3, 3)))
+
 model.add(Flatten())  # 3D map to 1D vector
-model.add(Dense(64))
+
+#model.add(Dense(64))
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
 
@@ -46,9 +55,15 @@ model.compile(loss='binary_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-model.fit(X, y, batch_size=16, epochs=3, validation_split=0.15)
+model.fit(X, y, batch_size=8, epochs=10, validation_split=0.15)
 
-model.save('512_79_coffee.model')
+model.save('256_192_full.model')
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
