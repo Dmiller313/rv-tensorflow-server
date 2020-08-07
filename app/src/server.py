@@ -10,7 +10,8 @@ from datetime import datetime
 server = Flask(__name__)
 port = int(os.environ.get("PORT", 5000))
 
-model = tf.keras.models.load_model("256_optimized.model")
+#model = tf.keras.models.load_model("256_optimized.model")
+model = tf.keras.models.load_model("128_true_optimized.model")
 
 UPLOAD_FOLDER = 'UPLOAD_FOLDER'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'bmp'])
@@ -33,19 +34,44 @@ def prepare (filepath):
     return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
 def identifyObject(sample):
-     img = sample
-     prediction = model.predict([prepare(img)])
 
      jsonBuild = {
-         #"output":output_data
-         "foundObject":CATEGORIES[int(max(prediction))]#,
-         #"matchPercentage":calculateMatch(),
-         #"otherInfo":"other"
+          "foundObject":"none"
      }
-     gc.collect()
-     os.remove(img) #specifically, path to the image
-     print(jsonBuild)
-     return jsonBuild
+
+     prediction = model.predict([prepare(sample)])
+     output = prediction[0]
+
+     if(output[0] == 1):
+          result = CATEGORIES[0]
+          jsonBuild = {
+               "foundObject":result
+          }
+          gc.collect()
+          os.remove(sample)
+          print(jsonBuild)
+          return jsonBuild
+     elif(output[1] == 1):
+          result = CATEGORIES[1]
+          jsonBuild = {
+               "foundObject":result
+          }
+          gc.collect()
+          os.remove(sample)
+          print(jsonBuild)
+          return jsonBuild
+     elif(output[2] == 1):
+          result = CATEGORIES[2]
+          jsonBuild = {
+               "foundObject":result
+          }
+          gc.collect()
+          os.remove(sample)
+          print(jsonBuild)
+          return jsonBuild
+     else:
+          return jsonBuild
+
 
 
 @server.route("/")

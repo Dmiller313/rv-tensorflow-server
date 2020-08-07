@@ -16,7 +16,7 @@ RUN apt-get install -y libxrender-dev
 COPY src/ .
 
 
-EXPOSE 8000
+EXPOSE 5000
 
 # CMD [ "python", "./server.py" ]
 # CMD gunicorn --bind 0.0.0.0:$PORT server:server
