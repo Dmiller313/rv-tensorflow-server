@@ -11,7 +11,7 @@ server = Flask(__name__)
 port = int(os.environ.get("PORT", 5000))
 
 #model = tf.keras.models.load_model("256_optimized.model")
-model = tf.keras.models.load_model("128_true_optimized.model")
+model = tf.keras.models.load_model("128_newset_optimized.model")
 
 UPLOAD_FOLDER = 'UPLOAD_FOLDER'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'bmp'])
@@ -21,7 +21,7 @@ server.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 server.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 DATADIR = "./data/sample/"
-CATEGORIES = ["coffee","bottle","cardboard"]
+CATEGORIES = ["Coffee cup","Water bottle","Cardboard"]
 
 def allowed_file(filename):
      return '.' in filename and \
@@ -36,34 +36,47 @@ def prepare (filepath):
 def identifyObject(sample):
 
      jsonBuild = {
-          "foundObject":"none"
+          "foundObject":"none",
+          "matchPercent":0
      }
+
+     ambiguous = False
+     lowerbound = 0.5
 
      prediction = model.predict([prepare(sample)])
      output = prediction[0]
 
-     if(output[0] == 1):
+     if(output[0] <= lowerbound and output[1] <= lowerbound and output[2] <= lowerbound):
+          ambiguous = True
+
+     #if(output[0] == 1 and not ambiguous):
+     if(max(output) == output[0] and not ambiguous):
           result = CATEGORIES[0]
           jsonBuild = {
-               "foundObject":result
+               "foundObject":result,
+               "matchPercent":(output[0] * 100.0)
           }
           gc.collect()
           os.remove(sample)
           print(jsonBuild)
           return jsonBuild
-     elif(output[1] == 1):
+     #elif(output[1] == 1 and not ambiguous):
+     elif(max(output) == output[1] and not ambiguous):
           result = CATEGORIES[1]
           jsonBuild = {
-               "foundObject":result
+               "foundObject":result,
+               "matchPercent":(output[1] * 100.0)
           }
           gc.collect()
           os.remove(sample)
           print(jsonBuild)
           return jsonBuild
-     elif(output[2] == 1):
+     #elif(output[2] == 1 and not ambiguous):
+     elif(max(output) == output[2] and not ambiguous):
           result = CATEGORIES[2]
           jsonBuild = {
-               "foundObject":result
+               "foundObject":result,
+               "matchPercent":(output[2] * 100.0)
           }
           gc.collect()
           os.remove(sample)

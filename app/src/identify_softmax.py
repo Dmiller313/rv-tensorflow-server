@@ -27,17 +27,15 @@ for cat in CATEGORIES:
             output = prediction[0]
             #print(img)
             print("================================")
+            print(img)
             print(prediction)
             if(output[0] == 1 and cat == "coffee"):
-                print(img)
                 print(output)
                 MATCHES[0] = MATCHES[0] + 1
             if(output[1] == 1 and cat == "plastic"):
-                print(img)
                 print(output)
                 MATCHES[1] = MATCHES[1] + 1
             if(output[2] == 1 and cat == "cardboard"):
-                print(img)
                 print(output)
                 MATCHES[2] = MATCHES[2] + 1
             print("================================")
